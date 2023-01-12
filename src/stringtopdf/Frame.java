@@ -160,11 +160,13 @@ public class Frame extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         JFileChooser chooser = new JFileChooser();
         String FILENAME = null;
-        // FileNameExtensionFilter filter = new FileNameExtensionFilter("xml");
-        // chooser.setFileFilter(filter);
+         FileNameExtensionFilter filter = new FileNameExtensionFilter("xml files (*.xml)", "xml");
+         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             FILENAME = chooser.getSelectedFile().getAbsolutePath();
+        }else if(returnVal == JFileChooser.CANCEL_OPTION){
+            return;
         }
 
         try {
