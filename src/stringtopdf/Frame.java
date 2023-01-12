@@ -170,7 +170,7 @@ public class Frame extends javax.swing.JFrame {
         }
 
         try {
-
+            pdfStringFile = null;
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
@@ -180,7 +180,7 @@ public class Frame extends javax.swing.JFrame {
 
             doc.getDocumentElement().normalize();
 
-            doc.getDocumentElement().normalize();
+            
             NodeList nListParentTag = doc.getElementsByTagName("env:DocumentHeader");
             for (int k = 0; k < nListParentTag.getLength(); k++) {
                 Node nNode2 = nListParentTag.item(k);
@@ -188,17 +188,21 @@ public class Frame extends javax.swing.JFrame {
                     Element elem = (Element) nNode2;
                     Node nodePdfElement = elem.getElementsByTagName("env:DocumentPdf").item(0);
                     pdfStringFile = nodePdfElement.getTextContent();
+                }else{
+                    System.out.println("greska");
                 }
             }
         } catch (SAXException | IOException | ParserConfigurationException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (pdfStringFile != null || !pdfStringFile.isEmpty()) {
+        if (pdfStringFile != null) {
             try {
                 skiniPdf(pdfStringFile);
             } catch (IOException ex) {
                 Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }else{
+            JOptionPane.showMessageDialog(null,"Ne postoji pdf u fajlu", "Neispravan fajl", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
     public void openFile(String file) {
@@ -301,10 +305,8 @@ public class Frame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Frame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Frame().setVisible(true);
         });
     }
 
