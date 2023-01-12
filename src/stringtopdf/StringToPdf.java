@@ -15,7 +15,7 @@ public class StringToPdf {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-      new Frame().setVisible(true);
+        new Frame().setVisible(true);
     }
-    
+
 }

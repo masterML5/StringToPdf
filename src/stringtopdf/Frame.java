@@ -29,15 +29,15 @@ import org.apache.commons.codec.binary.Base64;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-
-
 /**
  *
  * @author milosjelic
  */
 public class Frame extends javax.swing.JFrame {
+
     private static File fdir;
     String pdfStringFile;
+
     /**
      * Creates new form Frame
      */
@@ -140,8 +140,8 @@ public class Frame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseReleased
-          String str = jTextArea1.getText();
-          
+        String str = jTextArea1.getText();
+
         try {
             skiniPdf(str);
         } catch (IOException ex) {
@@ -154,50 +154,50 @@ public class Frame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseReleased
 
     private void jButton3MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseReleased
-      onPaste();
+        onPaste();
     }//GEN-LAST:event_jButton3MouseReleased
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         JFileChooser chooser = new JFileChooser();
         String FILENAME = null;
-       // FileNameExtensionFilter filter = new FileNameExtensionFilter("xml");
-       // chooser.setFileFilter(filter);
+        // FileNameExtensionFilter filter = new FileNameExtensionFilter("xml");
+        // chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-           FILENAME= chooser.getSelectedFile().getAbsolutePath();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            FILENAME = chooser.getSelectedFile().getAbsolutePath();
         }
-        
-         try {
 
-          DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-          dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        try {
 
-          DocumentBuilder db = dbf.newDocumentBuilder();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
-          Document doc = db.parse(new File(FILENAME));
+            DocumentBuilder db = dbf.newDocumentBuilder();
 
-          doc.getDocumentElement().normalize();
+            Document doc = db.parse(new File(FILENAME));
 
-           doc.getDocumentElement().normalize();
-                NodeList nListParentTag = doc.getElementsByTagName("env:DocumentHeader");
-                for (int k = 0; k < nListParentTag.getLength(); k++) {
-                    Node nNode2 = nListParentTag.item(k);
-                    if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
-                        Element elem = (Element) nNode2;
-                        Node nodePdfElement = elem.getElementsByTagName("env:DocumentPdf").item(0);
-                        pdfStringFile = nodePdfElement.getTextContent();
-                    }
+            doc.getDocumentElement().normalize();
+
+            doc.getDocumentElement().normalize();
+            NodeList nListParentTag = doc.getElementsByTagName("env:DocumentHeader");
+            for (int k = 0; k < nListParentTag.getLength(); k++) {
+                Node nNode2 = nListParentTag.item(k);
+                if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
+                    Element elem = (Element) nNode2;
+                    Node nodePdfElement = elem.getElementsByTagName("env:DocumentPdf").item(0);
+                    pdfStringFile = nodePdfElement.getTextContent();
                 }
-         } catch (SAXException | IOException | ParserConfigurationException ex) {
+            }
+        } catch (SAXException | IOException | ParserConfigurationException ex) {
             Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
         }
-         if(pdfStringFile != null || !pdfStringFile.isEmpty()){
+        if (pdfStringFile != null || !pdfStringFile.isEmpty()) {
             try {
                 skiniPdf(pdfStringFile);
             } catch (IOException ex) {
                 Logger.getLogger(Frame.class.getName()).log(Level.SEVERE, null, ex);
             }
-         }
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
     public void openFile(String file) {
         try {
@@ -207,67 +207,70 @@ public class Frame extends javax.swing.JFrame {
             System.out.println(ioe);
         }
     }
-       private void onPaste(){
-    Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
-    Transferable t = c.getContents(this);
-    if (t == null)
-        return;
-    try {
-        jTextArea1.setText((String) t.getTransferData(DataFlavor.stringFlavor));
-    } catch (UnsupportedFlavorException | IOException e){
-        System.out.println(e);
-    }//try
-}//onPaste
-     void skiniPdf(String pdfString) throws IOException{
+
+    private void onPaste() {
+        Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable t = c.getContents(this);
+        if (t == null) {
+            return;
+        }
+        try {
+            jTextArea1.setText((String) t.getTransferData(DataFlavor.stringFlavor));
+        } catch (UnsupportedFlavorException | IOException e) {
+            System.out.println(e);
+        }//try
+    }//onPaste
+
+    void skiniPdf(String pdfString) throws IOException {
         String uspesnoSkidanjePdf;
         LocalDateTime myDateObj = LocalDateTime.now();
 
-            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyyHH-mm-ss");
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyyHH-mm-ss");
 
-    String datetime = myDateObj.format(myFormatObj); 
-    if(!Base64.isArrayByteBase64(pdfString.getBytes())){
+        String datetime = myDateObj.format(myFormatObj);
+        if (!Base64.isArrayByteBase64(pdfString.getBytes())) {
             JOptionPane.showMessageDialog(null, "Unesite Base64 String!");
             return;
         }
         byte[] decoded = java.util.Base64.getDecoder().decode(pdfString);
-        
-                        Integer pdfPoruka;
-                        pdfPoruka = JOptionPane.showConfirmDialog(null, "Da li zelite da sacuvate PDF dokument fakture ?", "PDF faktura preuzimanje", JOptionPane.YES_NO_OPTION);
-                        //definisati gde ce se fakture smestati! PDF je cca 65KB
-                        if (pdfPoruka == 0) {
-            JFileChooser chooser = new JFileChooser();
-                            chooser.setCurrentDirectory(fdir);
-                            chooser.setDialogTitle("Preuzimanje PDF");
-                            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                            
-                            //
-                            // disable the "All files" option.
-                            //
-                            chooser.setAcceptAllFileFilterUsed(false);
-                            //    
-                            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                                
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Prekid");
-                            }
 
-                            String dirPDF = chooser.getSelectedFile().toString();
-                            dirPDF = dirPDF + "\\";
-                            String path = "eFakturePDF_"+datetime+".pdf";
-                            try (FileOutputStream fosPdf = new FileOutputStream(dirPDF + path)) {
-                                fosPdf.write(decoded);
-                                fosPdf.flush();
-                 uspesnoSkidanjePdf = "Uspesno ste skinuli PDF dokument na lokaciju " + dirPDF + path;
-                 JOptionPane.showMessageDialog(null, uspesnoSkidanjePdf);
-                 openFile(dirPDF+path);
-                            }
-                        } else {
-             uspesnoSkidanjePdf = "Prekid";
-              JOptionPane.showMessageDialog(null, uspesnoSkidanjePdf);
-                        } 
-                      
+        Integer pdfPoruka;
+        pdfPoruka = JOptionPane.showConfirmDialog(null, "Da li zelite da sacuvate PDF dokument fakture ?", "PDF faktura preuzimanje", JOptionPane.YES_NO_OPTION);
+        //definisati gde ce se fakture smestati! PDF je cca 65KB
+        if (pdfPoruka == 0) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(fdir);
+            chooser.setDialogTitle("Preuzimanje PDF");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            //
+            // disable the "All files" option.
+            //
+            chooser.setAcceptAllFileFilterUsed(false);
+            //    
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Prekid");
+            }
+
+            String dirPDF = chooser.getSelectedFile().toString();
+            dirPDF = dirPDF + "\\";
+            String path = "eFakturePDF_" + datetime + ".pdf";
+            try (FileOutputStream fosPdf = new FileOutputStream(dirPDF + path)) {
+                fosPdf.write(decoded);
+                fosPdf.flush();
+                uspesnoSkidanjePdf = "Uspesno ste skinuli PDF dokument na lokaciju " + dirPDF + path;
+                JOptionPane.showMessageDialog(null, uspesnoSkidanjePdf);
+                openFile(dirPDF + path);
+            }
+        } else {
+            uspesnoSkidanjePdf = "Prekid";
+            JOptionPane.showMessageDialog(null, uspesnoSkidanjePdf);
+        }
+
     }
-    
+
     /**
      * @param args the command line arguments
      */
